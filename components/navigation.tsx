@@ -106,12 +106,7 @@ export default function Navigation() {
             icon: FileText,
             className: getButtonClass("/solicitante/nova-solicitacao"),
           },
-          {
-            href: "/solicitante/minhas-solicitacoes",
-            label: "Minhas Solicitações",
-            icon: Users,
-            className: getButtonClass("/solicitante/minhas-solicitacoes"),
-          },
+
           {
             href: "/solicitante/checagens",
             label: "Checagens",
