@@ -670,8 +670,14 @@ export default function SolicitacoesDepartamento() {
 
             {/* Container com scroll e sticky header - Removendo wrapper extra do Table do shadcn se possível ou forçando estilo */}
             <div className="rounded-lg border border-slate-200 shadow-inner relative max-h-[70vh] overflow-auto">
-              <table className="w-full caption-bottom text-sm min-w-[1530px] border-collapse text-left">
-                <thead className="bg-slate-50 sticky top-0 z-20 shadow-sm [&_tr]:border-b">
+              <table
+                className="w-full caption-bottom text-sm min-w-[1530px] text-left"
+                style={{ borderCollapse: 'separate', borderSpacing: 0 }}
+              >
+                <thead
+                  className="bg-slate-50 sticky top-0 z-50 shadow-sm [&_tr]:border-b"
+                  style={{ transform: 'translateZ(0)' }}
+                >
                   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted bg-slate-50 hover:bg-slate-50">
                     {colunasVisiveis.numero && (
                       <th
