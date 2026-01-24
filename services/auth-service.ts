@@ -19,9 +19,9 @@ export class AuthService {
         return { usuario: null, erro: "Email não encontrado" }
       }
 
-      // Por enquanto, vamos usar uma senha padrão para todos: "123456"
-      // Em produção real, você implementaria hash de senha
-      if (senha !== "123456") {
+      // Verificar senha com o banco de dados
+      // Nota: Em produção, usaríamos hash (bcrypt/argon2). Por enquanto é texto simples.
+      if (senha !== usuario.senha) {
         console.log("❌ Senha incorreta")
         return { usuario: null, erro: "Senha incorreta" }
       }
