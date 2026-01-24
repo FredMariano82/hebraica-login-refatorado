@@ -222,9 +222,10 @@ export default function SolicitacoesDepartamento() {
     )
     .sort((a, b) => {
       if (a.prioridade !== b.prioridade) return a.prioridade - b.prioridade
-      const dataA = new Date(a.solicitacao.dataSolicitacao.split("/").reverse().join("-"))
-      const dataB = new Date(b.solicitacao.dataSolicitacao.split("/").reverse().join("-"))
-      return dataB.getTime() - dataA.getTime()
+      // Ordenar por data inicial (mais próxima primeiro)
+      const dataA = new Date(a.solicitacao.dataInicial.split("/").reverse().join("-"))
+      const dataB = new Date(b.solicitacao.dataInicial.split("/").reverse().join("-"))
+      return dataA.getTime() - dataB.getTime()
     })
 
   // Calcular paginação
