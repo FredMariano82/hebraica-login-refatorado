@@ -668,105 +668,106 @@ export default function SolicitacoesDepartamento() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-slate-200 overflow-auto max-h-[70vh] shadow-inner relative">
-              <Table className="min-w-[1530px] border-collapse">
-                <TableHeader className="bg-slate-50 sticky top-0 z-20 shadow-sm">
-                  <TableRow className="bg-slate-50 hover:bg-slate-50">
+            {/* Container com scroll e sticky header - Removendo wrapper extra do Table do shadcn se possível ou forçando estilo */}
+            <div className="rounded-lg border border-slate-200 shadow-inner relative max-h-[70vh] overflow-auto">
+              <table className="w-full caption-bottom text-sm min-w-[1530px] border-collapse text-left">
+                <thead className="bg-slate-50 sticky top-0 z-20 shadow-sm [&_tr]:border-b">
+                  <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted bg-slate-50 hover:bg-slate-50">
                     {colunasVisiveis.numero && (
-                      <TableHead
-                        className="font-semibold text-slate-800 text-center min-w-[120px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[120px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
                         onClick={() => requestSort("numero")}
                       >
                         <div className="flex items-center justify-center">
                           Número {getSortIcon("numero")}
                         </div>
-                      </TableHead>
+                      </th>
                     )}
                     {colunasVisiveis.dataSolicitacao && (
-                      <TableHead
-                        className="font-semibold text-slate-800 text-center min-w-[110px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[110px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
                         onClick={() => requestSort("dataSolicitacao")}
                       >
                         <div className="flex items-center justify-center">
                           Data Solicitação {getSortIcon("dataSolicitacao")}
                         </div>
-                      </TableHead>
+                      </th>
                     )}
                     {colunasVisiveis.empresa && (
-                      <TableHead
-                        className="font-semibold text-slate-800 text-center min-w-[180px] cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[180px] cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
                         onClick={() => requestSort("empresa")}
                       >
                         <div className="flex items-center justify-center">
                           Empresa {getSortIcon("empresa")}
                         </div>
-                      </TableHead>
+                      </th>
                     )}
                     {colunasVisiveis.prestador && (
-                      <TableHead
-                        className="font-semibold text-slate-800 text-center min-w-[160px] cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[160px] cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
                         onClick={() => requestSort("prestador")}
                       >
                         <div className="flex items-center justify-center">
                           Prestador {getSortIcon("prestador")}
                         </div>
-                      </TableHead>
+                      </th>
                     )}
                     {colunasVisiveis.documento && (
-                      <TableHead
-                        className="font-semibold text-slate-800 text-center min-w-[130px] cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[130px] cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
                         onClick={() => requestSort("documento")}
                       >
                         <div className="flex items-center justify-center">
                           Documento {getSortIcon("documento")}
                         </div>
-                      </TableHead>
+                      </th>
                     )}
                     {colunasVisiveis.documento2 && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[130px] sticky top-0 bg-slate-50 z-20">
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[130px] sticky top-0 bg-slate-50 z-20">
                         Documento2
-                      </TableHead>
+                      </th>
                     )}
                     {colunasVisiveis.dataInicial && (
-                      <TableHead
-                        className="font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
                         onClick={() => requestSort("dataInicial")}
                       >
                         <div className="flex items-center justify-center">
                           Data Inicial {getSortIcon("dataInicial")}
                         </div>
-                      </TableHead>
+                      </th>
                     )}
                     {colunasVisiveis.dataFinal && (
-                      <TableHead
-                        className="font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
                         onClick={() => requestSort("dataFinal")}
                       >
                         <div className="flex items-center justify-center">
                           Data Final {getSortIcon("dataFinal")}
                         </div>
-                      </TableHead>
+                      </th>
                     )}
                     {colunasVisiveis.liberacao && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[90px] sticky top-0 bg-slate-50 z-20">Liberação</TableHead>
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[90px] sticky top-0 bg-slate-50 z-20">Liberação</th>
                     )}
                     {colunasVisiveis.checagem && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[100px] sticky top-0 bg-slate-50 z-20">Checagem</TableHead>
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[100px] sticky top-0 bg-slate-50 z-20">Checagem</th>
                     )}
                     {colunasVisiveis.validaAte && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[130px] whitespace-nowrap sticky top-0 bg-slate-50 z-20">
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[130px] whitespace-nowrap sticky top-0 bg-slate-50 z-20">
                         Válida até
-                      </TableHead>
+                      </th>
                     )}
-                    <TableHead className="font-semibold text-slate-800 text-center min-w-[80px] sticky top-0 bg-slate-50 z-20">Ações</TableHead>
+                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[80px] sticky top-0 bg-slate-50 z-20">Ações</th>
                     {colunasVisiveis.observacoes && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[200px] sticky top-0 bg-slate-50 z-20">
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[200px] sticky top-0 bg-slate-50 z-20">
                         Observações
-                      </TableHead>
+                      </th>
                     )}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+                  </tr>
+                </thead>
+                <tbody className="[&_tr:last-child]:border-0">
                   {dadosPaginados.map(({ solicitacao, prestador, prioridade }, index) => {
                     const prestadorIndex = solicitacao.prestadores.findIndex((p) => p.id === prestador.id)
                     // Remover esta linha:
@@ -936,8 +937,8 @@ export default function SolicitacoesDepartamento() {
                       </TableRow>
                     )
                   })}
-                </TableBody>
-              </Table>
+                </tbody>
+              </table>
             </div>
 
             {dadosFiltrados.length === 0 && (
