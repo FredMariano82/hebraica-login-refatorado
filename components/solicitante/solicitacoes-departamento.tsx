@@ -13,6 +13,10 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  ChevronDown,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -66,6 +70,12 @@ export default function SolicitacoesDepartamento() {
   const [solicitacoesReais, setSolicitacoesReais] = useState<any[]>([])
   const [carregando, setCarregando] = useState(true)
   const [dialogAberto, setDialogAberto] = useState(false)
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" }>({
+    key: "dataInicial", // Default sorting
+    direction: "asc",
+  })
+  const [mostrarFiltros, setMostrarFiltros] = useState(false)
+
   const [prestadorSelecionado, setPrestadorSelecionado] = useState<{
     solicitacao: any
     prestador: any
@@ -221,11 +231,66 @@ export default function SolicitacoesDepartamento() {
       })),
     )
     .sort((a, b) => {
-      // Ordenar por data inicial (mais próxima primeiro)
-      const dataA = new Date(a.solicitacao.dataInicial.split("/").reverse().join("-"))
-      const dataB = new Date(b.solicitacao.dataInicial.split("/").reverse().join("-"))
-      return dataA.getTime() - dataB.getTime()
+      // Lógica de ordenação dinâmica
+      const { key, direction } = sortConfig
+      let valorA: any
+      let valorB: any
+
+      switch (key) {
+        case "numero":
+          valorA = a.solicitacao.numero
+          valorB = b.solicitacao.numero
+          break
+        case "dataSolicitacao":
+          valorA = new Date(a.solicitacao.dataSolicitacao.split("/").reverse().join("-")).getTime()
+          valorB = new Date(b.solicitacao.dataSolicitacao.split("/").reverse().join("-")).getTime()
+          break
+        case "empresa":
+          valorA = a.solicitacao.empresa
+          valorB = b.solicitacao.empresa
+          break
+        case "prestador":
+          valorA = a.prestador.nome
+          valorB = b.prestador.nome
+          break
+        case "documento":
+          valorA = a.prestador.documento
+          valorB = b.prestador.documento
+          break
+        case "dataInicial":
+          valorA = new Date(a.solicitacao.dataInicial.split("/").reverse().join("-")).getTime()
+          valorB = new Date(b.solicitacao.dataInicial.split("/").reverse().join("-")).getTime()
+          break
+        case "dataFinal":
+          valorA = new Date(a.solicitacao.dataFinal.split("/").reverse().join("-")).getTime()
+          valorB = new Date(b.solicitacao.dataFinal.split("/").reverse().join("-")).getTime()
+          break
+        default:
+          return 0
+      }
+
+      if (valorA < valorB) {
+        return direction === "asc" ? -1 : 1
+      }
+      if (valorA > valorB) {
+        return direction === "asc" ? 1 : -1
+      }
+      return 0
     })
+
+  const requestSort = (key: string) => {
+    let direction: "asc" | "desc" = "asc"
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc"
+    }
+    setSortConfig({ key, direction })
+  }
+
+  const getSortIcon = (columnKey: string) => {
+    if (sortConfig.key !== columnKey) return <ArrowUpDown className="h-4 w-4 ml-1 text-slate-400" />
+    if (sortConfig.direction === "asc") return <ArrowUp className="h-4 w-4 ml-1 text-blue-600" />
+    return <ArrowDown className="h-4 w-4 ml-1 text-blue-600" />
+  }
 
   // Calcular paginação
   const totalPrestadores = dadosOrdenados.length
@@ -385,10 +450,21 @@ export default function SolicitacoesDepartamento() {
               </AlertDescription>
             </Alert>
 
-            <div className="mb-6 p-4 bg-slate-50 rounded-lg">
+            <div className="mb-6 bg-slate-50 rounded-lg p-4 transition-all duration-300 ease-in-out">
               <div className="flex items-center gap-2 mb-4">
                 <Filter className="h-5 w-5 text-slate-600" />
-                <Label className="text-lg font-medium text-slate-700">Filtros</Label>
+                <Label className="text-lg font-medium text-slate-700">Filtros & Busca</Label>
+
+                {/* Botão Toggle Filtros Avançados */}
+                <Button
+                  onClick={() => setMostrarFiltros(!mostrarFiltros)}
+                  variant="outline"
+                  size="sm"
+                  className={`ml-4 border-slate-300 ${mostrarFiltros ? "bg-slate-200 text-slate-800" : "text-slate-600"} hover:bg-slate-100`}
+                >
+                  Filtros Avançados
+                  <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${mostrarFiltros ? "rotate-180" : ""}`} />
+                </Button>
 
                 {/* Botão Modal de Colunas */}
                 <Button
@@ -497,90 +573,98 @@ export default function SolicitacoesDepartamento() {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Status Checagem */}
-                <div>
-                  <Label className="text-sm font-medium text-slate-700 mb-2 block">Status Checagem</Label>
-                  <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-                    <SelectTrigger className="border-slate-300">
-                      <SelectValue placeholder="Selecione o status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="todos">Todos</SelectItem>
-                      <SelectItem value="pendente">Pendente</SelectItem>
-                      <SelectItem value="aprovado">Aprovado</SelectItem>
-                      <SelectItem value="reprovado">Reprovado</SelectItem>
-                      <SelectItem value="vencida">Vencida</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Empresa */}
-                <div>
-                  <Label className="text-sm font-medium text-slate-700 mb-2 block">Empresa</Label>
-                  <Select value={filtroEmpresa} onValueChange={setFiltroEmpresa}>
-                    <SelectTrigger className="border-slate-300">
-                      <SelectValue placeholder="Selecione a empresa" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="todos">Todas</SelectItem>
-                      {empresasDepartamento.map((empresa) => (
-                        <SelectItem key={empresa} value={empresa}>
-                          {empresa}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-medium text-slate-700 mb-2 block">Status Liberação</Label>
-                  <Select value={filtroCadastro} onValueChange={setFiltroCadastro}>
-                    <SelectTrigger className="border-slate-300">
-                      <SelectValue placeholder="Selecione o cadastro" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="todos">Todos</SelectItem>
-                      <SelectItem value="pendente">Pendente</SelectItem>
-                      <SelectItem value="ok">Ok</SelectItem>
-                      <SelectItem value="urgente">Urgente</SelectItem>
-                      <SelectItem value="vencida">Vencida</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-medium text-slate-700 mb-2 block">Solicitante é</Label>
-                  <Select value={filtroSolicitante} onValueChange={setFiltroSolicitante}>
-                    <SelectTrigger className="border-slate-300">
-                      <SelectValue placeholder="Selecione o solicitante" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="todos">Todos</SelectItem>
-                      {solicitantesDepartamento.map((solicitante) => (
-                        <SelectItem key={solicitante} value={solicitante}>
-                          {solicitante}
-                          {solicitante === usuario?.nome && " (Você)"}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Busca Geral */}
-                <div>
+              {/* Área de Filtros - Layout Flexível */}
+              <div className="space-y-4">
+                {/* Linha Principal: Busca Geral (Sempre Visível) */}
+                <div className="max-w-md">
                   <Label className="text-sm font-medium text-slate-700 mb-2 block">Busca Geral</Label>
                   <div className="relative">
                     <Input
                       type="text"
-                      placeholder="Buscar..."
+                      placeholder="Buscar por nome, documento, empresa..."
                       value={buscaGeral}
                       onChange={(e) => setBuscaGeral(e.target.value)}
                       className="border-slate-300 pr-10"
                     />
-                    <Search className="h-4 w-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                    <Search className="h-4 w-4 absolute right-3 top-1/2 transform -translate-y/2 text-slate-400" />
                   </div>
                 </div>
+
+                {/* Filtros Avançados (Collapsible) */}
+                {mostrarFiltros && (
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-slate-200 animate-in fade-in slide-in-from-top-2">
+                    {/* Empresa */}
+                    <div>
+                      <Label className="text-sm font-medium text-slate-700 mb-2 block">Empresa</Label>
+                      <Select value={filtroEmpresa} onValueChange={setFiltroEmpresa}>
+                        <SelectTrigger className="border-slate-300">
+                          <SelectValue placeholder="Selecione a empresa" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="todos">Todas</SelectItem>
+                          {empresasDepartamento.map((empresa) => (
+                            <SelectItem key={empresa} value={empresa}>
+                              {empresa}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Status Checagem */}
+                    <div>
+                      <Label className="text-sm font-medium text-slate-700 mb-2 block">Status Checagem</Label>
+                      <Select value={filtroStatus} onValueChange={setFiltroStatus}>
+                        <SelectTrigger className="border-slate-300">
+                          <SelectValue placeholder="Selecione o status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="todos">Todos</SelectItem>
+                          <SelectItem value="pendente">Pendente</SelectItem>
+                          <SelectItem value="aprovado">Aprovado</SelectItem>
+                          <SelectItem value="reprovado">Reprovado</SelectItem>
+                          <SelectItem value="vencida">Vencida</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Status Liberação */}
+                    <div>
+                      <Label className="text-sm font-medium text-slate-700 mb-2 block">Status Liberação</Label>
+                      <Select value={filtroCadastro} onValueChange={setFiltroCadastro}>
+                        <SelectTrigger className="border-slate-300">
+                          <SelectValue placeholder="Selecione o cadastro" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="todos">Todos</SelectItem>
+                          <SelectItem value="pendente">Pendente</SelectItem>
+                          <SelectItem value="ok">Ok</SelectItem>
+                          <SelectItem value="urgente">Urgente</SelectItem>
+                          <SelectItem value="vencida">Vencida</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Solicitante */}
+                    <div>
+                      <Label className="text-sm font-medium text-slate-700 mb-2 block">Solicitante é</Label>
+                      <Select value={filtroSolicitante} onValueChange={setFiltroSolicitante}>
+                        <SelectTrigger className="border-slate-300">
+                          <SelectValue placeholder="Selecione o solicitante" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="todos">Todos</SelectItem>
+                          {solicitantesDepartamento.map((solicitante) => (
+                            <SelectItem key={solicitante} value={solicitante}>
+                              {solicitante}
+                              {solicitante === usuario?.nome && " (Você)"}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -604,26 +688,53 @@ export default function SolicitacoesDepartamento() {
                 <TableHeader>
                   <TableRow className="bg-slate-50">
                     {colunasVisiveis.numero && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[120px] whitespace-nowrap">
-                        Número
+                      <TableHead
+                        className="font-semibold text-slate-800 text-center min-w-[120px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors"
+                        onClick={() => requestSort("numero")}
+                      >
+                        <div className="flex items-center justify-center">
+                          Número {getSortIcon("numero")}
+                        </div>
                       </TableHead>
                     )}
                     {colunasVisiveis.dataSolicitacao && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[110px] whitespace-nowrap">
-                        Data Solicitação
+                      <TableHead
+                        className="font-semibold text-slate-800 text-center min-w-[110px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors"
+                        onClick={() => requestSort("dataSolicitacao")}
+                      >
+                        <div className="flex items-center justify-center">
+                          Data Solicitação {getSortIcon("dataSolicitacao")}
+                        </div>
                       </TableHead>
                     )}
                     {colunasVisiveis.empresa && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[180px]">Empresa</TableHead>
+                      <TableHead
+                        className="font-semibold text-slate-800 text-center min-w-[180px] cursor-pointer hover:bg-slate-100 transition-colors"
+                        onClick={() => requestSort("empresa")}
+                      >
+                        <div className="flex items-center justify-center">
+                          Empresa {getSortIcon("empresa")}
+                        </div>
+                      </TableHead>
                     )}
                     {colunasVisiveis.prestador && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[160px]">
-                        Prestador
+                      <TableHead
+                        className="font-semibold text-slate-800 text-center min-w-[160px] cursor-pointer hover:bg-slate-100 transition-colors"
+                        onClick={() => requestSort("prestador")}
+                      >
+                        <div className="flex items-center justify-center">
+                          Prestador {getSortIcon("prestador")}
+                        </div>
                       </TableHead>
                     )}
                     {colunasVisiveis.documento && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[130px]">
-                        Documento
+                      <TableHead
+                        className="font-semibold text-slate-800 text-center min-w-[130px] cursor-pointer hover:bg-slate-100 transition-colors"
+                        onClick={() => requestSort("documento")}
+                      >
+                        <div className="flex items-center justify-center">
+                          Documento {getSortIcon("documento")}
+                        </div>
                       </TableHead>
                     )}
                     {colunasVisiveis.documento2 && (
@@ -632,13 +743,23 @@ export default function SolicitacoesDepartamento() {
                       </TableHead>
                     )}
                     {colunasVisiveis.dataInicial && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap">
-                        Data Inicial
+                      <TableHead
+                        className="font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors"
+                        onClick={() => requestSort("dataInicial")}
+                      >
+                        <div className="flex items-center justify-center">
+                          Data Inicial {getSortIcon("dataInicial")}
+                        </div>
                       </TableHead>
                     )}
                     {colunasVisiveis.dataFinal && (
-                      <TableHead className="font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap">
-                        Data Final
+                      <TableHead
+                        className="font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors"
+                        onClick={() => requestSort("dataFinal")}
+                      >
+                        <div className="flex items-center justify-center">
+                          Data Final {getSortIcon("dataFinal")}
+                        </div>
                       </TableHead>
                     )}
                     {colunasVisiveis.liberacao && (
