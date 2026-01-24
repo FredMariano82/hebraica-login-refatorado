@@ -675,7 +675,8 @@ export default function SolicitacoesDepartamento() {
                   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted bg-slate-50 hover:bg-slate-50">
                     {colunasVisiveis.numero && (
                       <th
-                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[120px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[120px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
                         onClick={() => requestSort("numero")}
                       >
                         <div className="flex items-center justify-center">
@@ -685,7 +686,8 @@ export default function SolicitacoesDepartamento() {
                     )}
                     {colunasVisiveis.dataSolicitacao && (
                       <th
-                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[110px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[110px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
                         onClick={() => requestSort("dataSolicitacao")}
                       >
                         <div className="flex items-center justify-center">
@@ -695,7 +697,8 @@ export default function SolicitacoesDepartamento() {
                     )}
                     {colunasVisiveis.empresa && (
                       <th
-                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[180px] cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[180px] cursor-pointer hover:bg-slate-100 transition-colors z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
                         onClick={() => requestSort("empresa")}
                       >
                         <div className="flex items-center justify-center">
@@ -705,7 +708,8 @@ export default function SolicitacoesDepartamento() {
                     )}
                     {colunasVisiveis.prestador && (
                       <th
-                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[160px] cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[160px] cursor-pointer hover:bg-slate-100 transition-colors z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
                         onClick={() => requestSort("prestador")}
                       >
                         <div className="flex items-center justify-center">
@@ -715,7 +719,8 @@ export default function SolicitacoesDepartamento() {
                     )}
                     {colunasVisiveis.documento && (
                       <th
-                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[130px] cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[130px] cursor-pointer hover:bg-slate-100 transition-colors z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
                         onClick={() => requestSort("documento")}
                       >
                         <div className="flex items-center justify-center">
@@ -724,13 +729,17 @@ export default function SolicitacoesDepartamento() {
                       </th>
                     )}
                     {colunasVisiveis.documento2 && (
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[130px] sticky top-0 bg-slate-50 z-20">
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[130px] z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
+                      >
                         Documento2
                       </th>
                     )}
                     {colunasVisiveis.dataInicial && (
                       <th
-                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
                         onClick={() => requestSort("dataInicial")}
                       >
                         <div className="flex items-center justify-center">
@@ -740,7 +749,8 @@ export default function SolicitacoesDepartamento() {
                     )}
                     {colunasVisiveis.dataFinal && (
                       <th
-                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors sticky top-0 bg-slate-50 z-20"
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[100px] whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
                         onClick={() => requestSort("dataFinal")}
                       >
                         <div className="flex items-center justify-center">
@@ -749,19 +759,40 @@ export default function SolicitacoesDepartamento() {
                       </th>
                     )}
                     {colunasVisiveis.liberacao && (
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[90px] sticky top-0 bg-slate-50 z-20">Liberação</th>
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[90px] z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
+                      >
+                        Liberação
+                      </th>
                     )}
                     {colunasVisiveis.checagem && (
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[100px] sticky top-0 bg-slate-50 z-20">Checagem</th>
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[100px] z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
+                      >
+                        Checagem
+                      </th>
                     )}
                     {colunasVisiveis.validaAte && (
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[130px] whitespace-nowrap sticky top-0 bg-slate-50 z-20">
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[130px] whitespace-nowrap z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
+                      >
                         Válida até
                       </th>
                     )}
-                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[80px] sticky top-0 bg-slate-50 z-20">Ações</th>
+                    <th
+                      className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[80px] z-20"
+                      style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
+                    >
+                      Ações
+                    </th>
                     {colunasVisiveis.observacoes && (
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[200px] sticky top-0 bg-slate-50 z-20">
+                      <th
+                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 font-semibold text-slate-800 text-center min-w-[200px] z-20"
+                        style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: '#f8fafc' }}
+                      >
                         Observações
                       </th>
                     )}
