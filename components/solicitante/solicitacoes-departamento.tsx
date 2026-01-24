@@ -28,6 +28,20 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth } from "../../contexts/auth-context"
 import { DataInicialIndicator } from "../../utils/date-indicators"
+import {
+  StatusChecagemBadge,
+  StatusChecagemIcon,
+  StatusCadastroBadge,
+  StatusCadastroIcon,
+  getChecagemStatus,
+  getCadastroStatus,
+} from "../ui/status-badges"
+import { isDateExpired } from "../../utils/date-helpers"
+import { isAccessExpiringSoon } from "../../utils/status-helpers"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { getSolicitacoesByDepartamento } from "../../services/solicitacoes-service"
+import { formatarDataParaBR } from "../../utils/date-helpers"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 // Definir todas as colunas disponíveis para o Solicitante
 const COLUNAS_DISPONIVEIS = [
