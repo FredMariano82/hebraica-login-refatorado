@@ -60,6 +60,7 @@ export default function SolicitacoesDepartamento() {
   const router = useRouter()
   const [filtroStatus, setFiltroStatus] = useState<string>("todos")
   const [filtroCadastro, setFiltroCadastro] = useState<string>("todos")
+  const [filtroEmpresa, setFiltroEmpresa] = useState<string>("todos")
   const [filtroSolicitante, setFiltroSolicitante] = useState<string>("todos")
   const [buscaGeral, setBuscaGeral] = useState<string>("")
   const [solicitacoesReais, setSolicitacoesReais] = useState<any[]>([])
@@ -155,7 +156,7 @@ export default function SolicitacoesDepartamento() {
   // Resetar página quando filtros mudarem
   useEffect(() => {
     setPaginaAtual(1)
-  }, [filtroStatus, filtroCadastro, filtroSolicitante, buscaGeral])
+  }, [filtroStatus, filtroCadastro, filtroSolicitante, filtroEmpresa, buscaGeral])
 
   if (carregando) {
     return (
@@ -169,11 +170,17 @@ export default function SolicitacoesDepartamento() {
     new Set(solicitacoesReais.filter((s) => s.departamento === usuario?.departamento).map((s) => s.solicitante)),
   ).sort()
 
+  const empresasDepartamento = Array.from(
+    new Set(solicitacoesReais.filter((s) => s.departamento === usuario?.departamento).map((s) => s.empresa)),
+  ).sort()
+
   const dadosFiltrados = solicitacoesReais
     .filter((solicitacao) => solicitacao.departamento === usuario?.departamento)
     .map((solicitacao) => {
       const solicitanteMatch = filtroSolicitante === "todos" || solicitacao.solicitante === filtroSolicitante
-      if (!solicitanteMatch) return null
+      const empresaMatch = filtroEmpresa === "todos" || solicitacao.empresa === filtroEmpresa
+
+      if (!solicitanteMatch || !empresaMatch) return null
 
       let buscaMatch = true
       if (buscaGeral) {
@@ -508,6 +515,24 @@ export default function SolicitacoesDepartamento() {
                   </Select>
                 </div>
 
+                {/* Empresa */}
+                <div>
+                  <Label className="text-sm font-medium text-slate-700 mb-2 block">Empresa</Label>
+                  <Select value={filtroEmpresa} onValueChange={setFiltroEmpresa}>
+                    <SelectTrigger className="border-slate-300">
+                      <SelectValue placeholder="Selecione a empresa" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todas</SelectItem>
+                      {empresasDepartamento.map((empresa) => (
+                        <SelectItem key={empresa} value={empresa}>
+                          {empresa}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div>
                   <Label className="text-sm font-medium text-slate-700 mb-2 block">Status Liberação</Label>
                   <Select value={filtroCadastro} onValueChange={setFiltroCadastro}>
@@ -688,16 +713,6 @@ export default function SolicitacoesDepartamento() {
                         {colunasVisiveis.prestador && (
                           <TableCell className="text-sm text-center">
                             <div className="whitespace-nowrap font-medium flex items-center justify-center gap-2">
-                              {/* Indicador de prioridade no nome do prestador */}
-                              {prestador.status === "pendente" && prestador.cadastro === "urgente" && (
-                                <div
-                                  className="w-2 h-2 bg-red-500 rounded-full"
-                                  title="Prioridade ALTA - Urgente"
-                                ></div>
-                              )}
-                              {prestador.status === "pendente" && prestador.cadastro === "pendente" && (
-                                <div className="w-2 h-2 bg-slate-500 rounded-full" title="Prioridade NORMAL"></div>
-                              )}
                               {prestador.nome}
                             </div>
                           </TableCell>

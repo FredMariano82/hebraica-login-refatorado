@@ -659,7 +659,7 @@ export default function NovaSolicitacao({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 space-y-6">
-      <AvisoPrazo onAceitar={setAceitouPrazo} />
+      <AvisoPrazo aceitou={aceitouPrazo} onAceitar={setAceitouPrazo} />
 
       {aceitouPrazo && <FinalidadeSolicitacao onFinalidadeChange={setFinalidade} finalidadeSelecionada={finalidade} />}
 

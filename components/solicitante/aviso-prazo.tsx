@@ -8,14 +8,12 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface AvisoPrazoProps {
+  aceitou: boolean
   onAceitar: (aceito: boolean) => void
 }
 
-export default function AvisoPrazo({ onAceitar }: AvisoPrazoProps) {
-  const [aceitou, setAceitou] = useState(false)
-
+export default function AvisoPrazo({ aceitou, onAceitar }: AvisoPrazoProps) {
   const handleAceitar = (checked: boolean) => {
-    setAceitou(checked)
     onAceitar(checked)
   }
 
