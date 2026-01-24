@@ -27,20 +27,6 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth } from "../../contexts/auth-context"
-import {
-  StatusChecagemBadge,
-  StatusChecagemIcon,
-  StatusCadastroBadge,
-  StatusCadastroIcon,
-  getChecagemStatus,
-  getCadastroStatus,
-} from "../ui/status-badges"
-import { isDateExpired } from "../../utils/date-helpers"
-import { isAccessExpiringSoon } from "../../utils/status-helpers"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { getSolicitacoesByDepartamento } from "../../services/solicitacoes-service"
-import { formatarDataParaBR } from "../../utils/date-helpers"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { DataInicialIndicator } from "../../utils/date-indicators"
 
 // Definir todas as colunas disponíveis para o Solicitante
@@ -466,16 +452,75 @@ export default function SolicitacoesDepartamento() {
                   <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${mostrarFiltros ? "rotate-180" : ""}`} />
                 </Button>
 
-                {/* Botão Modal de Colunas */}
-                <Button
-                  onClick={() => setModalColunasAberto(true)}
-                  variant="outline"
-                  size="sm"
-                  className="ml-auto border-slate-600 text-slate-600 hover:bg-slate-50"
-                >
-                  <Columns className="h-4 w-4 mr-1" />
-                  Colunas
-                </Button>
+                {/* Botão Colunas com Dropdown Customizado */}
+                <div className="relative inline-block text-left">
+                  <Button
+                    onClick={() => setModalColunasAberto(!modalColunasAberto)}
+                    variant="outline"
+                    size="sm"
+                    className="ml-2 border-slate-600 text-slate-600 hover:bg-slate-50"
+                  >
+                    <Columns className="h-4 w-4 mr-1" />
+                    Colunas
+                    <ChevronDown className="h-3 w-3 ml-1" />
+                  </Button>
+
+                  {/* Dropdown Menu */}
+                  {modalColunasAberto && (
+                    <>
+                      {/* Overlay invisível para fechar ao clicar fora */}
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setModalColunasAberto(false)}
+                      ></div>
+
+                      <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-50 border border-slate-200 p-4">
+                        <div className="flex items-center justify-between mb-3 border-b pb-2">
+                          <span className="font-semibold text-sm text-slate-700">Exibir Colunas</span>
+                          <span className="text-xs text-slate-400">
+                            {Object.values(colunasVisiveis).filter(Boolean).length}/{COLUNAS_DISPONIVEIS.length}
+                          </span>
+                        </div>
+
+                        <div className="flex gap-2 mb-3">
+                          <Button
+                            onClick={() => toggleTodasColunas(true)}
+                            variant="ghost"
+                            size="sm"
+                            className="flex-1 h-7 text-xs text-blue-600 hover:bg-blue-50 border border-blue-100"
+                          >
+                            Todas
+                          </Button>
+                          <Button
+                            onClick={() => toggleTodasColunas(false)}
+                            variant="ghost"
+                            size="sm"
+                            className="flex-1 h-7 text-xs text-slate-600 hover:bg-slate-50 border border-slate-100"
+                          >
+                            Nenhuma
+                          </Button>
+                        </div>
+
+                        <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                          {COLUNAS_DISPONIVEIS.map((coluna) => (
+                            <label
+                              key={coluna.key}
+                              className="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 p-1 rounded transition-colors"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={colunasVisiveis[coluna.key] || false}
+                                onChange={() => toggleColuna(coluna.key)}
+                                className="h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                              />
+                              <span className="text-sm text-slate-600">{coluna.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
 
                 {/* Botão Download */}
                 <Button
@@ -497,80 +542,6 @@ export default function SolicitacoesDepartamento() {
                     </>
                   )}
                 </Button>
-
-                {/* Modal de Colunas */}
-                {modalColunasAberto && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center">
-                    {/* Overlay */}
-                    <div
-                      className="fixed inset-0 bg-black bg-opacity-50"
-                      onClick={() => setModalColunasAberto(false)}
-                    ></div>
-
-                    {/* Modal Content */}
-                    <div className="relative bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
-                      <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-semibold text-blue-800">🔧 Configurar Colunas</h2>
-                        <Button
-                          onClick={() => setModalColunasAberto(false)}
-                          variant="outline"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      <div className="space-y-4">
-                        {/* Botões para selecionar/deselecionar todas */}
-                        <div className="flex gap-2 pb-2 border-b border-blue-200">
-                          <Button
-                            onClick={() => toggleTodasColunas(true)}
-                            variant="outline"
-                            size="sm"
-                            className="flex-1 border-green-600 text-green-600 hover:bg-green-50"
-                          >
-                            ✅ Mostrar Todas
-                          </Button>
-                          <Button
-                            onClick={() => toggleTodasColunas(false)}
-                            variant="outline"
-                            size="sm"
-                            className="flex-1 border-red-600 text-red-600 hover:bg-red-50"
-                          >
-                            ❌ Esconder Todas
-                          </Button>
-                        </div>
-
-                        {/* Lista de checkboxes para cada coluna */}
-                        <div className="space-y-3 max-h-80 overflow-y-auto">
-                          {COLUNAS_DISPONIVEIS.map((coluna) => (
-                            <div key={coluna.key} className="flex items-center space-x-3">
-                              <input
-                                type="checkbox"
-                                id={coluna.key}
-                                checked={colunasVisiveis[coluna.key] || false}
-                                onChange={() => toggleColuna(coluna.key)}
-                                className="h-4 w-4 text-blue-600 border-blue-300 rounded focus:ring-blue-500"
-                              />
-                              <label htmlFor={coluna.key} className="text-sm font-medium text-blue-700 cursor-pointer">
-                                {coluna.label}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Resumo */}
-                        <div className="pt-2 border-t border-blue-200 text-center">
-                          <p className="text-xs text-blue-600">
-                            {Object.values(colunasVisiveis).filter(Boolean).length} de {COLUNAS_DISPONIVEIS.length}{" "}
-                            colunas visíveis
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Área de Filtros - Layout Flexível */}
