@@ -206,6 +206,22 @@ export default function TodasSolicitacoes() {
     return prestador.status.toLowerCase() !== "pendente"
   }
 
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "aprovado":
+        return <CheckCircle className="h-4 w-4 text-green-600" />
+      case "reprovado":
+      case "reprovada":
+        return <XCircle className="h-4 w-4 text-red-600" />
+      case "pendente":
+        return <Clock className="h-4 w-4 text-yellow-600" />
+      case "excecao":
+        return <ShieldAlert className="h-4 w-4 text-purple-600" />
+      default:
+        return null
+    }
+  }
+
   // Função para alternar visibilidade da coluna
   const toggleColuna = (chaveColuna: string) => {
     setColunasVisiveis((prev) => ({
@@ -237,46 +253,46 @@ export default function TodasSolicitacoes() {
       // Filtrar prestadores dentro da solicitação
       const prestadoresFiltrados = solicitacao.prestadores
         ? solicitacao.prestadores.filter((prestador) => {
-            // Calcular status real para filtros
-            const checagemStatusReal = getChecagemStatus(prestador)
-            const cadastroStatusReal = getCadastroStatus(prestador, solicitacao.dataFinal)
+          // Calcular status real para filtros
+          const checagemStatusReal = getChecagemStatus(prestador)
+          const cadastroStatusReal = getCadastroStatus(prestador, solicitacao.dataFinal)
 
-            // Filtro de status checagem (incluindo status calculados)
-            let statusMatch = filtroStatus === "todos"
-            if (filtroStatus === "vencida") {
-              statusMatch = checagemStatusReal === "vencida"
-            } else if (filtroStatus !== "todos") {
-              // CORREÇÃO: Mapear filtro para status do banco
-              const statusParaFiltro =
-                filtroStatus === "aprovado" ? "aprovado" : filtroStatus === "reprovado" ? "reprovado" : filtroStatus
-              statusMatch = prestador.status === statusParaFiltro
-            }
+          // Filtro de status checagem (incluindo status calculados)
+          let statusMatch = filtroStatus === "todos"
+          if (filtroStatus === "vencida") {
+            statusMatch = checagemStatusReal === "vencida"
+          } else if (filtroStatus !== "todos") {
+            // CORREÇÃO: Mapear filtro para status do banco
+            const statusParaFiltro =
+              filtroStatus === "aprovado" ? "aprovado" : filtroStatus === "reprovado" ? "reprovado" : filtroStatus
+            statusMatch = prestador.status === statusParaFiltro
+          }
 
-            // Filtro de cadastro (incluindo status calculados)
-            let cadastroMatch = filtroCadastro === "todos"
-            if (filtroCadastro === "vencida") {
-              cadastroMatch = cadastroStatusReal === "vencida"
-            } else if (filtroCadastro === "negada") {
-              cadastroMatch = cadastroStatusReal === "negada"
-            } else if (filtroCadastro !== "todos") {
-              cadastroMatch = prestador.cadastro === filtroCadastro
-            }
+          // Filtro de cadastro (incluindo status calculados)
+          let cadastroMatch = filtroCadastro === "todos"
+          if (filtroCadastro === "vencida") {
+            cadastroMatch = cadastroStatusReal === "vencida"
+          } else if (filtroCadastro === "negada") {
+            cadastroMatch = cadastroStatusReal === "negada"
+          } else if (filtroCadastro !== "todos") {
+            cadastroMatch = prestador.cadastro === filtroCadastro
+          }
 
-            // Filtro de busca geral
-            let buscaMatch = true
-            if (buscaGeral.trim()) {
-              const termoBusca = buscaGeral.trim()
-              const nomeNormalizado = normalizarTexto(prestador.nome)
-              const documentoNormalizado = normalizarDocumento(prestador.documento)
-              const termoBuscaNormalizado = normalizarTexto(termoBusca)
-              const termoBuscaDocumento = normalizarDocumento(termoBusca)
+          // Filtro de busca geral
+          let buscaMatch = true
+          if (buscaGeral.trim()) {
+            const termoBusca = buscaGeral.trim()
+            const nomeNormalizado = normalizarTexto(prestador.nome)
+            const documentoNormalizado = normalizarDocumento(prestador.documento)
+            const termoBuscaNormalizado = normalizarTexto(termoBusca)
+            const termoBuscaDocumento = normalizarDocumento(termoBusca)
 
-              buscaMatch =
-                nomeNormalizado.includes(termoBuscaNormalizado) || documentoNormalizado.includes(termoBuscaDocumento)
-            }
+            buscaMatch =
+              nomeNormalizado.includes(termoBuscaNormalizado) || documentoNormalizado.includes(termoBuscaDocumento)
+          }
 
-            return statusMatch && cadastroMatch && buscaMatch
-          })
+          return statusMatch && cadastroMatch && buscaMatch
+        })
         : []
 
       // Retornar solicitação apenas se tiver prestadores que passaram no filtro
@@ -296,11 +312,11 @@ export default function TodasSolicitacoes() {
     .flatMap((solicitacao) =>
       solicitacao.prestadores
         ? solicitacao.prestadores.map((prestador) => ({
-            solicitacao,
-            prestador,
-            prioridade: getPrioridade(prestador, solicitacao.dataInicial),
-            diasAteDataInicial: getDiasAteDataInicial(solicitacao.dataInicial),
-          }))
+          solicitacao,
+          prestador,
+          prioridade: getPrioridade(prestador, solicitacao.dataInicial),
+          diasAteDataInicial: getDiasAteDataInicial(solicitacao.dataInicial),
+        }))
         : [],
     )
     .sort((a, b) => {
@@ -373,15 +389,15 @@ export default function TodasSolicitacoes() {
         prevSolicitacoes.map((s) =>
           s.id === prestadorSelecionado.solicitacao.id
             ? {
-                ...s,
-                prestadores: s.prestadores
-                  ? s.prestadores.map((p) =>
-                      p.id === prestadorSelecionado.prestador.id
-                        ? { ...p, cadastro: "negada" as StatusCadastro, observacoes: observacoes.trim() }
-                        : p,
-                    )
-                  : [],
-              }
+              ...s,
+              prestadores: s.prestadores
+                ? s.prestadores.map((p) =>
+                  p.id === prestadorSelecionado.prestador.id
+                    ? { ...p, cadastro: "negada" as StatusCadastro, observacoes: observacoes.trim() }
+                    : p,
+                )
+                : [],
+            }
             : s,
         ),
       )
@@ -463,11 +479,11 @@ export default function TodasSolicitacoes() {
         prevSolicitacoes.map((s) =>
           s.id === solicitacao.id
             ? {
-                ...s,
-                prestadores: s.prestadores
-                  ? s.prestadores.map((p) => (p.id === prestador.id ? { ...p, cadastro: "ok" as StatusCadastro } : p))
-                  : [],
-              }
+              ...s,
+              prestadores: s.prestadores
+                ? s.prestadores.map((p) => (p.id === prestador.id ? { ...p, cadastro: "ok" as StatusCadastro } : p))
+                : [],
+            }
             : s,
         ),
       )
@@ -917,6 +933,10 @@ export default function TodasSolicitacoes() {
                     const statusLiberacao = getCadastroStatus(prestador, solicitacao.dataFinal)
                     const mostrarUrgencia = statusLiberacao === "pendente" || statusLiberacao === "urgente"
 
+                    const isBloqueadoPeloGestor =
+                      (prestador.status === "reprovado" || prestador.status === "reprovada") &&
+                      (!prestador.aprovado_por || !prestador.aprovado_por.includes("Gestor - Reprovação Confirmada"))
+
                     return (
                       <TableRow key={`${solicitacao.id}-${prestador.id}`} className="hover:bg-slate-50">
                         {colunasVisiveis.prestador && (
@@ -957,33 +977,37 @@ export default function TodasSolicitacoes() {
                         )}
                         {colunasVisiveis.checagem && (
                           <TableCell className="text-center">
-                            <div className="flex items-center justify-center gap-2 whitespace-nowrap">
-                              {/* PRODUÇÃO REAL: Mapear TODOS os status do banco para componente */}
-                              {prestador.status === "aprovado" && (
-                                <>
-                                  <CheckCircle className="h-4 w-4 text-green-600" />
-                                  <Badge className="bg-green-100 text-green-800 border-green-200">Aprovada</Badge>
-                                </>
-                              )}
-                              {prestador.status === "reprovado" && (
-                                <>
-                                  <XCircle className="h-4 w-4 text-red-600" />
-                                  <Badge className="bg-red-100 text-red-800 border-red-200">Reprovada</Badge>
-                                </>
-                              )}
-                              {prestador.status === "pendente" && (
-                                <>
-                                  <Clock className="h-4 w-4 text-yellow-600" />
-                                  <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Pendente</Badge>
-                                </>
-                              )}
-                              {prestador.status === "excecao" && (
-                                <>
-                                  <ShieldAlert className="h-4 w-4 text-purple-600" />
-                                  <Badge className="bg-purple-100 text-purple-800 border-purple-200">Exceção</Badge>
-                                </>
-                              )}
-                            </div>
+                            {isBloqueadoPeloGestor ? (
+                              <Badge className="bg-orange-100 text-orange-800 border-orange-200">Em Análise</Badge>
+                            ) : (
+                              <div className="flex items-center justify-center gap-2 whitespace-nowrap">
+                                {/* PRODUÇÃO REAL: Mapear TODOS os status do banco para componente */}
+                                {prestador.status === "aprovado" && (
+                                  <>
+                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                    <Badge className="bg-green-100 text-green-800 border-green-200">Aprovada</Badge>
+                                  </>
+                                )}
+                                {prestador.status === "reprovado" && (
+                                  <>
+                                    <XCircle className="h-4 w-4 text-red-600" />
+                                    <Badge className="bg-red-100 text-red-800 border-red-200">Reprovada</Badge>
+                                  </>
+                                )}
+                                {prestador.status === "pendente" && (
+                                  <>
+                                    <Clock className="h-4 w-4 text-yellow-600" />
+                                    <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Pendente</Badge>
+                                  </>
+                                )}
+                                {prestador.status === "excecao" && (
+                                  <>
+                                    <ShieldAlert className="h-4 w-4 text-purple-600" />
+                                    <Badge className="bg-purple-100 text-purple-800 border-purple-200">Exceção</Badge>
+                                  </>
+                                )}
+                              </div>
+                            )}
                           </TableCell>
                         )}
                         {colunasVisiveis.validaAte && (
@@ -997,198 +1021,177 @@ export default function TodasSolicitacoes() {
                         )}
                         {colunasVisiveis.acoes && (
                           <TableCell>
-                            <div className="flex items-center justify-center gap-1 relative">
-                              {/* BOTÃO CONFIRMAR (VERDE) - COM CONTROLE DE HABILITAÇÃO */}
-                              <div className="relative">
-                                <Button
-                                  onClick={() => botoesHabilitados && handleEditarClick(prestador.id)}
-                                  variant="outline"
-                                  size="sm"
-                                  disabled={!botoesHabilitados}
-                                  className={`h-7 w-7 p-0 ${
-                                    botoesHabilitados
-                                      ? "border-green-600 text-green-600 hover:bg-green-50"
-                                      : "border-slate-300 text-slate-400 cursor-not-allowed opacity-50"
-                                  }`}
-                                  title={botoesHabilitados ? "Confirmar liberação" : "Aguardando checagem"}
-                                >
-                                  <Check className="h-3 w-3" />
-                                </Button>
-
-                                {/* Popover de confirmação - só aparece se habilitado */}
-                                {popoverAberto === prestador.id && botoesHabilitados && (
-                                  <div className="absolute top-8 right-0 z-50 bg-white border border-slate-200 rounded-lg shadow-lg p-3 min-w-[250px]">
-                                    <p className="text-sm text-slate-700 mb-3">Já realizou cadastro do prestador?</p>
-                                    <div className="flex gap-2">
-                                      <Button
-                                        onClick={() => handleConfirmarCadastro(solicitacao, prestador)}
-                                        size="sm"
-                                        className="bg-green-600 hover:bg-green-700 text-white"
-                                      >
-                                        <Check className="h-3 w-3 mr-1" />
-                                        SIM
-                                      </Button>
-                                      <Button
-                                        onClick={handleCancelar}
-                                        variant="outline"
-                                        size="sm"
-                                        className="border-slate-300 text-slate-600"
-                                      >
-                                        <X className="h-3 w-3 mr-1" />
-                                        NÃO
-                                      </Button>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-
-                              {/* 🆕 BOTÃO NEGADO (VERMELHO) - COM CONTROLE DE HABILITAÇÃO */}
-                              <div className="relative">
-                                <Button
-                                  onClick={() => botoesHabilitados && handleNegarClick(solicitacao, prestador)}
-                                  variant="outline"
-                                  size="sm"
-                                  disabled={!botoesHabilitados}
-                                  className={`h-7 w-7 p-0 mr-1 ${
-                                    botoesHabilitados
-                                      ? "border-red-600 text-red-600 hover:bg-red-50"
-                                      : "border-slate-300 text-slate-400 cursor-not-allowed opacity-50"
-                                  }`}
-                                  title={botoesHabilitados ? "Negar liberação" : "Aguardando checagem"}
-                                >
-                                  <X className="h-3 w-3" />
-                                </Button>
-                              </div>
-
-                              {/* Mensagem de sucesso */}
-                              {mensagemSucesso === prestador.id && (
-                                <div className="absolute top-8 right-0 z-40 bg-green-100 border border-green-200 rounded-lg p-2 text-xs text-green-700">
-                                  ✅ Liberação atualizada!
-                                </div>
-                              )}
+                            <div className="flex gap-2">
+                              <Button
+                                onClick={() => handleConfirmarCadastro(solicitacao, prestador)}
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700 text-white"
+                              >
+                                <Check className="h-3 w-3 mr-1" />
+                                SIM
+                              </Button>
+                              <Button
+                                onClick={handleCancelar}
+                                variant="outline"
+                                size="sm"
+                                className="border-slate-300 text-slate-600"
+                              >
+                                <X className="h-3 w-3 mr-1" />
+                                NÃO
+                              </Button>
                             </div>
-                          </TableCell>
+                          </div>
                         )}
-                        {colunasVisiveis.justificativa && (
-                          <TableCell className="text-sm text-center">
-                            {prestador.justificativa ? (
-                              <div className="max-w-xs truncate" title={prestador.justificativa}>
-                                {prestador.justificativa}
-                              </div>
-                            ) : null}
-                          </TableCell>
+                      </div>
+
+                              {/* 🆕 BOTÃO NEGADO (VERMELHO) - COM CONTROLE DE HABILITAÇÃO */ }
+                    <div className="relative">
+                      <Button
+                        onClick={() => botoesHabilitados && handleNegarClick(solicitacao, prestador)}
+                        variant="outline"
+                        size="sm"
+                        disabled={!botoesHabilitados}
+                        className={`h-7 w-7 p-0 mr-1 ${botoesHabilitados
+                          ? "border-red-600 text-red-600 hover:bg-red-50"
+                          : "border-slate-300 text-slate-400 cursor-not-allowed opacity-50"
+                          }`}
+                        title={botoesHabilitados ? "Negar liberação" : "Aguardando checagem"}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+
+                    {/* Mensagem de sucesso */ }
+                    {
+                      mensagemSucesso === prestador.id && (
+                        <div className="absolute top-8 right-0 z-40 bg-green-100 border border-green-200 rounded-lg p-2 text-xs text-green-700">
+                          ✅ Liberação atualizada!
+                        </div>
+                      )
+                    }
+                            </div>
+              </TableCell>
                         )}
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Controles de Paginação */}
-            <div className="mt-4 flex items-center justify-between">
-              <div className="text-sm text-slate-600">
-                <strong>Total:</strong> {totalPrestadores} prestadores
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={handlePaginaAnterior}
-                  disabled={paginaAtual === 1}
-                  variant="outline"
-                  size="sm"
-                  className="border-slate-300 text-slate-600 disabled:opacity-50"
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Anterior
-                </Button>
-
-                <span className="text-sm text-slate-600 px-3">
-                  {paginaAtual} / {totalPaginas}
-                </span>
-
-                <Button
-                  onClick={handleProximaPagina}
-                  disabled={paginaAtual === totalPaginas}
-                  variant="outline"
-                  size="sm"
-                  className="border-slate-300 text-slate-600 disabled:opacity-50"
-                >
-                  Próxima
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 🆕 MODAL DE OBSERVAÇÕES (NEGADO) */}
-        <Dialog open={modalObservacoesAberto} onOpenChange={setModalObservacoesAberto}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                🔴 Negar Liberação
-              </DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-4">
-              {prestadorSelecionado && (
-                <div className="p-3 bg-slate-50 rounded-lg">
-                  <p className="text-sm text-slate-600 mb-1">
-                    <strong>Prestador:</strong> {prestadorSelecionado.prestador.nome}
-                  </p>
-                  <p className="text-sm text-slate-600">
-                    <strong>Documento:</strong> {prestadorSelecionado.prestador.documento}
-                  </p>
-                </div>
+              {colunasVisiveis.justificativa && (
+                <TableCell className="text-sm text-center">
+                  {prestador.justificativa ? (
+                    <div className="max-w-xs truncate" title={prestador.justificativa}>
+                      {prestador.justificativa}
+                    </div>
+                  ) : null}
+                </TableCell>
               )}
-
-              <div>
-                <Label htmlFor="observacoes" className="text-sm font-medium text-slate-700 mb-2 block">
-                  Observações <span className="text-red-500">*</span>
-                </Label>
-                <Textarea
-                  id="observacoes"
-                  placeholder="Digite o motivo da negação da liberação..."
-                  value={observacoes}
-                  onChange={(e) => setObservacoes(e.target.value)}
-                  className="min-h-[100px] border-slate-300 focus:border-red-500 focus:ring-red-500"
-                  maxLength={500}
-                />
-                <p className="text-xs text-slate-500 mt-1">{observacoes.length}/500 caracteres</p>
-              </div>
-            </div>
-
-            <DialogFooter className="flex gap-2">
-              <Button
-                onClick={() => setModalObservacoesAberto(false)}
-                variant="outline"
-                className="border-slate-300 text-slate-600"
-                disabled={carregandoNegacao}
-              >
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleConfirmarNegacao}
-                disabled={!observacoes.trim() || carregandoNegacao}
-                className="bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
-              >
-                {carregandoNegacao ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white mr-2"></div>
-                    Processando...
-                  </>
-                ) : (
-                  <>
-                    <X className="h-4 w-4 mr-1" />
-                    Confirmar Negação
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </TableRow>
+            )
+                  })}
+          </TableBody>
+        </Table>
       </div>
-    </div>
+
+      {/* Controles de Paginação */}
+      <div className="mt-4 flex items-center justify-between">
+        <div className="text-sm text-slate-600">
+          <strong>Total:</strong> {totalPrestadores} prestadores
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={handlePaginaAnterior}
+            disabled={paginaAtual === 1}
+            variant="outline"
+            size="sm"
+            className="border-slate-300 text-slate-600 disabled:opacity-50"
+          >
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            Anterior
+          </Button>
+
+          <span className="text-sm text-slate-600 px-3">
+            {paginaAtual} / {totalPaginas}
+          </span>
+
+          <Button
+            onClick={handleProximaPagina}
+            disabled={paginaAtual === totalPaginas}
+            variant="outline"
+            size="sm"
+            className="border-slate-300 text-slate-600 disabled:opacity-50"
+          >
+            Próxima
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      </div>
+    </CardContent>
+        </Card >
+
+    {/* 🆕 MODAL DE OBSERVAÇÕES (NEGADO) */ }
+    < Dialog open = { modalObservacoesAberto } onOpenChange = { setModalObservacoesAberto } >
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+            🔴 Negar Liberação
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          {prestadorSelecionado && (
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <p className="text-sm text-slate-600 mb-1">
+                <strong>Prestador:</strong> {prestadorSelecionado.prestador.nome}
+              </p>
+              <p className="text-sm text-slate-600">
+                <strong>Documento:</strong> {prestadorSelecionado.prestador.documento}
+              </p>
+            </div>
+          )}
+
+          <div>
+            <Label htmlFor="observacoes" className="text-sm font-medium text-slate-700 mb-2 block">
+              Observações <span className="text-red-500">*</span>
+            </Label>
+            <Textarea
+              id="observacoes"
+              placeholder="Digite o motivo da negação da liberação..."
+              value={observacoes}
+              onChange={(e) => setObservacoes(e.target.value)}
+              className="min-h-[100px] border-slate-300 focus:border-red-500 focus:ring-red-500"
+              maxLength={500}
+            />
+            <p className="text-xs text-slate-500 mt-1">{observacoes.length}/500 caracteres</p>
+          </div>
+        </div>
+
+        <DialogFooter className="flex gap-2">
+          <Button
+            onClick={() => setModalObservacoesAberto(false)}
+            variant="outline"
+            className="border-slate-300 text-slate-600"
+            disabled={carregandoNegacao}
+          >
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleConfirmarNegacao}
+            disabled={!observacoes.trim() || carregandoNegacao}
+            className="bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
+          >
+            {carregandoNegacao ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white mr-2"></div>
+                Processando...
+              </>
+            ) : (
+              <>
+                <X className="h-4 w-4 mr-1" />
+                Confirmar Negação
+              </>
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+        </Dialog >
+      </div >
+    </div >
   )
 }
