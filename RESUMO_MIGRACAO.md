@@ -1,38 +1,38 @@
 # 🔄 Resumo de Migração / Status do Projeto
 
 **Este arquivo serve como ponto de sincronização entre o PC de Casa e o PC da Empresa.**
-*Última atualização: 24/01/2026*
+*Última atualização: 26/01/2026 - Pós-Otimização Aprovador*
 
 ## 📍 Onde Paramos
 
-### 1. Tabela de Solicitações do Departamento (`solicitacoes-departamento.tsx`)
-*   **Status Atual:** Funcional, mas com pendência visual.
+### 1. Aprovador > Solicitações Pendentes (`solicitacoes-pendentes.tsx`)
+*   **Status Atual:** ✅ Concluído e Otimizado.
+*   **Melhorias Realizadas:**
+    *   **Atualização Otimista:** Ao aprovar/reprovar, a linha atualiza instantaneamente.
+    *   **Refresh Silencioso:** O sistema salva no banco sem mostrar tela de carregamento, mantendo scroll e filtros intactos.
+    *   **Correção de Types:** Ajustes de tipagem (TypeScript) para `PrestadorAvaliacao` e nulidade de justificativa.
+
+### 2. Solicitante > Solicitações do Departamento (`solicitacoes-departamento.tsx`)
+*   **Status Atual:** Funcional, com pendência visual.
 *   **Alterações Realizadas:**
-    *   ✅ Paginação aumentada para **50 itens** por página (Solicitado pelo usuário).
-    *   ✅ Implementado container com `max-h-[70vh]` e `overflow-auto` para rolagem interna.
-    *   ✅ Estilos `sticky top-0` aplicados ao cabeçalho.
-    *   ⚠️ **Problema em Aberto:** O cabeçalho **não está fixando** visualmente (Sticky Header falhando). Tentamos correções via classes Tailwind, CSS inline e hacks (`translateZ`), mas sem sucesso ainda. Provável conflito de layout pai.
-    *   ⏸️ **Decisão:** O problema do sticky header foi pausado temporariamente para focar em outras prioridades. O código atual mantém a estrutura para o sticky (com estilos inline forçados), aguardando futura investigação.
-
-### 2. Últimas Funcionalidades Implementadas
-*   Melhoria no botão "Colunas": Agora é um Popover interativo (não fecha ao clicar), permitindo ver as colunas mudando em tempo real.
-*   Correção de erro "Client-side exception" causado por imports removidos acidentalmente.
+    *   ✅ Paginação aumentada para **50 itens**.
+    *   ✅ Container com scroll interno (`max-h-[70vh]`).
+    *   ⚠️ **Pendência:** Sticky Header não fixa visualmente (investigação pausada).
 
 ---
 
-## 🚀 Como Continuar no Próximo PC
+## 🚀 Como Continuar
 
-Ao abrir este projeto em um novo computador (Casa ou Empresa), siga este roteiro:
+1.  **Dê um `git pull`** (ou sincronize o Drive).
+2.  **No PC:** Rode `npm install` e `npm run dev` para testar localmente.
+3.  **Próximo Passo:** Aplicar o padrão de *Tabela Otimizada* (Pagination 50 + Scroll Interno + Ações sem Refresh) para as outras páginas do sistema.
 
-1.  **Dê um `git pull`** para garantir que você tem o código mais recente.
-2.  **Chame o Antigravity** e diga:
-    > "Leia o arquivo `RESUMO_MIGRACAO.md` e retome o trabalho. Estamos tentando resolver o Sticky Header da tabela, que está implementado mas não funciona visualmente."
+## 📝 Lista de Tarefas (Padronização)
 
-## 📝 Lista de Tarefas (Backlog Atual)
-
-- [ ] **Prioridade:** Resolver definitivamente o Sticky Header (Investigar `overflow` em `layout.tsx` pai).
-- [ ] Verificar se a barra de rolagem horizontal está confortável com 50 itens.
-- [ ] (Adicionar aqui novas tarefas conforme surgirem).
+- [x] Aprovador > Pendentes (Otimização de ações feita)
+- [ ] Aprovador > Histórico (Verificar necessidade)
+- [ ] Solicitante > Departamento (Falta validar header)
+- [ ] Financeiro > (Se houver tabelas)
 
 ---
-*Dica: Peça para eu atualizar este arquivo sempre que você encerrar uma sessão importante de trabalho.*
+*Dica: Peça para eu ler este arquivo ao trocar de máquina.*

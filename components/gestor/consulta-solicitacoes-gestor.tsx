@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Eye, AlertTriangle, Filter, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react"
+import { Eye, AlertTriangle, Filter, ArrowUpDown, ChevronLeft, ChevronRight, CheckSquare } from "lucide-react"
 import type { Solicitacao, PrestadorAvaliacao } from "../../types"
 import { getAllSolicitacoes } from "../../services/solicitacoes-service"
 import { supabase } from "@/lib/supabase"
@@ -345,6 +345,39 @@ export default function ConsultaSolicitacoesGestor() {
     }
   }
 
+  const handleConfirmarReprovacao = async (item: { solicitacao: Solicitacao; prestador: PrestadorAvaliacao }) => {
+    if (!confirm(`Confirma a REPROVAÇÃO definitiva para ${item.prestador.nome}?`)) return
+
+    try {
+      const { error } = await supabase
+        .from("prestadores")
+        .update({
+          aprovado_por: "Gestor - Reprovação Confirmada",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", item.prestador.id)
+
+      if (error) throw error
+
+      setPrestadoresReprovados((prev) =>
+        prev.map((p) => {
+          if (p.prestador.id === item.prestador.id) {
+            return {
+              ...p,
+              prestador: { ...p.prestador, aprovado_por: "Gestor - Reprovação Confirmada" } as any,
+            }
+          }
+          return p
+        }),
+      )
+
+      alert("✅ Reprovação confirmada com sucesso.")
+    } catch (error) {
+      console.error("Erro ao confirmar reprovação:", error)
+      alert("Erro ao confirmar.")
+    }
+  }
+
   // Calcular paginação
   const totalPrestadores = prestadoresFiltrados.length
   const totalPaginas = Math.ceil(totalPrestadores / PRESTADORES_POR_PAGINA)
@@ -503,7 +536,7 @@ export default function ConsultaSolicitacoesGestor() {
                       <TableHead>Documento</TableHead>
                       <TableHead>Checagem</TableHead>
                       <TableHead>Válida até</TableHead>
-                      <TableHead>Horas Restantes</TableHead>
+                      {/* Coluna Horas Restantes removida */}
                       <TableHead>Justificativa</TableHead>
                       <TableHead>Ações</TableHead>
                     </TableRow>
@@ -545,18 +578,7 @@ export default function ConsultaSolicitacoesGestor() {
                             {item.prestador.checagemValidaAte ? formatarData(item.prestador.checagemValidaAte) : "N/A"}
                           </span>
                         </TableCell>
-                        <TableCell>
-                          <span
-                            className={
-                              item.prestador.checagemValidaAte &&
-                              calcularHorasRestantes(item.prestador.checagemValidaAte).includes("Urgente")
-                                ? "text-red-600 font-semibold"
-                                : ""
-                            }
-                          >
-                            {calcularHorasRestantes(item.prestador.checagemValidaAte)}
-                          </span>
-                        </TableCell>
+                        {/* Célula Horas Restantes removida */}
                         <TableCell>
                           <div className="max-w-xs truncate" title={item.prestador.justificativa || ""}>
                             {item.prestador.justificativa || "Sem justificativa"}
@@ -568,19 +590,26 @@ export default function ConsultaSolicitacoesGestor() {
                               <Eye className="h-4 w-4" />
                             </Button>
                             {(item.prestador.status === "reprovado" || item.prestador.status === "reprovada") && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="text-orange-600 border-orange-600 hover:bg-orange-50"
-                                onClick={() => {
-                                  console.log("🚨 CLIQUE NO BOTÃO EXCEÇÃO DETECTADO!")
-                                  console.log("📋 Item:", item.prestador.nome)
-                                  handleExcecao(item)
-                                }}
-                              >
-                                <AlertTriangle className="h-4 w-4" />
-                                Exceção
-                              </Button>
+                              <>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-orange-600 border-orange-600 hover:bg-orange-50"
+                                  onClick={() => handleExcecao(item)}
+                                  title="Criar Exceção"
+                                >
+                                  <AlertTriangle className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                                  onClick={() => handleConfirmarReprovacao(item)}
+                                  title="Confirmar Reprovação"
+                                >
+                                  <CheckSquare className="h-4 w-4" />
+                                </Button>
+                              </>
                             )}
                           </div>
                         </TableCell>
