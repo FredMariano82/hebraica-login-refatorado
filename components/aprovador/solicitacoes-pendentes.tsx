@@ -153,9 +153,16 @@ export default function SolicitacoesPendentes() {
         .map((solicitacao) => ({
           ...solicitacao,
           prestadores: solicitacao.prestadores.filter((prestador) => {
-            // Testar diferentes formas de identificar dados migrados
+            // DEBUG: Log para verificar campos do prestador
+            console.log("🔍 DEBUG - Prestador:", {
+              nome: prestador.nome,
+              aprovado_por: (prestador as any).aprovado_por,
+              aprovadoPor: prestador.aprovadoPor,
+              status: prestador.status,
+              observacoes: prestador.observacoes,
+            })
             const isMigrado =
-              prestador.aprovado_por === "Dados migrados pelo suporte" ||
+              (prestador as any).aprovado_por === "Dados migrados pelo suporte" ||
               prestador.aprovadoPor === "Dados migrados pelo suporte" ||
               (prestador.observacoes && prestador.observacoes.includes("migrados pelo suporte")) ||
               (prestador.justificativa && prestador.justificativa.includes("migrados pelo suporte"))
@@ -311,7 +318,7 @@ export default function SolicitacoesPendentes() {
             ...s,
             prestadores: s.prestadores.map((p) => {
               if (p.id !== prestadorAvaliando.prestador.id) return p
-              return { ...p, status: novoStatus as any, justificativa: justificativa || null }
+              return { ...p, status: novoStatus as any, justificativa: justificativa || undefined }
             }),
           }
         }),
