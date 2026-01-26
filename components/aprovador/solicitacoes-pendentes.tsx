@@ -311,7 +311,7 @@ export default function SolicitacoesPendentes() {
             ...s,
             prestadores: s.prestadores.map((p) => {
               if (p.id !== prestadorAvaliando.prestador.id) return p
-              return { ...p, status: novoStatus, justificativa: justificativa || null }
+              return { ...p, status: novoStatus as any, justificativa: justificativa || null }
             }),
           }
         }),
@@ -446,7 +446,7 @@ export default function SolicitacoesPendentes() {
                 <Filter className="h-5 w-5 text-slate-600" />
                 <Label className="text-lg font-medium text-slate-700">Filtros</Label>
                 <div className="ml-auto flex gap-2">
-                  <Button variant="outline" size="sm" onClick={buscarSolicitacoes}>
+                  <Button variant="outline" size="sm" onClick={() => buscarSolicitacoes()}>
                     <RefreshCw className="h-4 w-4 mr-1" /> Atualizar
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => setModalDownloadAberto(true)}>
