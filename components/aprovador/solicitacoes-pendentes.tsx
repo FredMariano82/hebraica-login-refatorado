@@ -139,9 +139,9 @@ export default function SolicitacoesPendentes() {
     return 1 // Aprovados, reprovados, etc. vão para o final
   }
 
-  const buscarSolicitacoes = async () => {
+  const buscarSolicitacoes = async (silent = false) => {
     try {
-      setCarregando(true)
+      if (!silent) setCarregando(true)
       // Buscar todas as solicitações para mostrar também as já avaliadas
       const solicitacoes = await getAllSolicitacoes()
 
@@ -153,15 +153,6 @@ export default function SolicitacoesPendentes() {
         .map((solicitacao) => ({
           ...solicitacao,
           prestadores: solicitacao.prestadores.filter((prestador) => {
-            // DEBUG: Log para verificar campos do prestador
-            console.log("🔍 DEBUG - Prestador:", {
-              nome: prestador.nome,
-              aprovado_por: prestador.aprovado_por,
-              aprovadoPor: prestador.aprovadoPor,
-              status: prestador.status,
-              observacoes: prestador.observacoes,
-            })
-
             // Testar diferentes formas de identificar dados migrados
             const isMigrado =
               prestador.aprovado_por === "Dados migrados pelo suporte" ||
@@ -183,7 +174,7 @@ export default function SolicitacoesPendentes() {
     } catch (error) {
       console.error("Erro ao buscar solicitações:", error)
     } finally {
-      setCarregando(false)
+      if (!silent) setCarregando(false)
     }
   }
 
@@ -309,6 +300,23 @@ export default function SolicitacoesPendentes() {
 
     try {
       const agora = new Date()
+      // Estado anterior para rollback se necessário
+      const estadoAnterior = [...solicitacoesReais]
+
+      // ATUALIZAÇÃO OTIMISTA (Muda na tela IMEDIATAMENTE)
+      setSolicitacoesReais((prevSolicitacoes) =>
+        prevSolicitacoes.map((s) => {
+          if (s.id !== prestadorAvaliando.solicitacao.id) return s
+          return {
+            ...s,
+            prestadores: s.prestadores.map((p) => {
+              if (p.id !== prestadorAvaliando.prestador.id) return p
+              return { ...p, status: novoStatus, justificativa: justificativa || null }
+            }),
+          }
+        }),
+      )
+
       const updateData: any = {
         status: novoStatus,
         aprovado_por: "Sistema", // Idealmente usar o nome real do usuário logado
@@ -330,14 +338,16 @@ export default function SolicitacoesPendentes() {
       if (error) {
         console.error("Erro ao atualizar status:", error)
         alert("Erro ao salvar avaliação. Tente novamente.")
+        // Rollback em caso de erro
+        setSolicitacoesReais(estadoAnterior)
         return
       }
 
       // Atualizar status geral da solicitação
       await atualizarStatusGeralSolicitacao(prestadorAvaliando.prestador.id)
 
-      // Buscar dados atualizados
-      buscarSolicitacoes()
+      // Buscar dados atualizados SILENCIOSAMENTE (sem Loading Screen)
+      buscarSolicitacoes(true)
 
       console.log("📝 Avaliação registrada:")
       console.log(`Prestador: ${prestadorAvaliando.prestador.nome}`)
