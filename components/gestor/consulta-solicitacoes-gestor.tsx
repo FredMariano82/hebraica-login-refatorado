@@ -47,7 +47,7 @@ export default function ConsultaSolicitacoesGestor() {
     porSolicitante: [],
   })
   const [carregandoEconomia, setCarregandoEconomia] = useState(false)
-  const PRESTADORES_POR_PAGINA = 50
+  const PRESTADORES_POR_PAGINA = 10
 
   console.log("🎯 ConsultaSolicitacoesGestor renderizado")
 
@@ -524,21 +524,21 @@ export default function ConsultaSolicitacoesGestor() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto border rounded-lg max-h-[70vh] overflow-y-auto relative">
+              <div className="overflow-x-auto">
                 <Table>
-                  <TableHeader className="sticky top-0 bg-slate-100 z-10 shadow-sm">
+                  <TableHeader>
                     <TableRow>
-                      <TableHead className="font-bold text-slate-700">Data Solicitação</TableHead>
-                      <TableHead className="font-bold text-slate-700">Data Inicial</TableHead>
-                      <TableHead className="font-bold text-slate-700">Departamento</TableHead>
-                      <TableHead className="font-bold text-slate-700">Empresa</TableHead>
-                      <TableHead className="font-bold text-slate-700">Prestador</TableHead>
-                      <TableHead className="font-bold text-slate-700">Documento</TableHead>
-                      <TableHead className="font-bold text-slate-700">Checagem</TableHead>
-                      <TableHead className="font-bold text-slate-700">Válida até</TableHead>
+                      <TableHead>Data Solicitação</TableHead>
+                      <TableHead>Data Inicial</TableHead>
+                      <TableHead>Departamento</TableHead>
+                      <TableHead>Empresa</TableHead>
+                      <TableHead>Prestador</TableHead>
+                      <TableHead>Documento</TableHead>
+                      <TableHead>Checagem</TableHead>
+                      <TableHead>Válida até</TableHead>
                       {/* Coluna Horas Restantes removida */}
-                      <TableHead className="font-bold text-slate-700">Justificativa</TableHead>
-                      <TableHead className="font-bold text-slate-700">Ações</TableHead>
+                      <TableHead>Justificativa</TableHead>
+                      <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
